@@ -26,12 +26,12 @@ def Persondetail(request):
     return Response(serializer.data)
   
   elif request.method == 'POST':
-    datas = request.data
-    serializer = PersonSerializer(data=datas)
+    data = request.data
+    serializer = PersonSerializer(data=data)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
-    return Response(serializer.error_messages)
+    return Response(serializer.errors)
   
   elif request.method == 'PUT':
     data = request.data
@@ -40,7 +40,7 @@ def Persondetail(request):
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
-    return Response(serializer.error_messages)
+    return Response(serializer.errors)
   
   elif request.method == 'PATCH':
     data = request.data
@@ -49,7 +49,7 @@ def Persondetail(request):
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
-    return Response(serializer.error_messages)
+    return Response(serializer.errors)
   
   else:
     data = request.data
