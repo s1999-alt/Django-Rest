@@ -10,7 +10,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-  team = TeamSerializer()
+  team = TeamSerializer(read_only=True)
   team_info = serializers.SerializerMethodField()
   class Meta:
     model = Person

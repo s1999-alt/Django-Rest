@@ -2,10 +2,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Person
 from .serializers import PersonSerializer
+from rest_framework import status
 
 from rest_framework.views import APIView
+from rest_framework import viewsets
 
 
+# This is the views using api_view decorator
 @api_view(['GET','POST'])
 def index(request):
   if request.method == 'GET':
@@ -60,7 +63,7 @@ def Persondetail(request):
     return Response('Person details deleted')
   
 
-
+#This is the class-based view using APIView
 class PersonView(APIView):
   def get(self, request):
     person = Person.objects.all()
@@ -69,3 +72,18 @@ class PersonView(APIView):
   
   def post(self, request):
     return Response("This is post APIVIEW")
+  
+
+#This is the class-based view using model Viewsets
+class PersonViewSet(viewsets.ModelViewSet):
+  serializer_class = PersonSerializer
+  queryset = Person.objects.all() 
+
+  def list(self, request):
+    search = request.GET.get('search')
+    queryset = self.queryset
+    if search:
+      queryset = queryset.filter(name__startswith= search)
+    
+    serializer = PersonSerializer(queryset, many=True)
+    return Response(serializer.data, status.HTTP_200_OK)
