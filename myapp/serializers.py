@@ -1,12 +1,23 @@
 from rest_framework import serializers
-from myapp.models import Person
+from myapp.models import Person,Team
 
+
+
+class TeamSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Team
+    fields = ['team_name']
 
 
 class PersonSerializer(serializers.ModelSerializer):
+  team = TeamSerializer()
+  team_info = serializers.SerializerMethodField()
   class Meta:
     model = Person
     fields = '__all__'
+  
+  def get_team_info(self, obj):
+    return "extra field"
   
   def validate(self, attr):
     special_characters = "!@#$%^&*()-+?_=,<>/"

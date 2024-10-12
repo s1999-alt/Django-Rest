@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from .models import Person
 from .serializers import PersonSerializer
 
+from rest_framework.views import APIView
+
 
 @api_view(['GET','POST'])
 def index(request):
@@ -56,3 +58,14 @@ def Persondetail(request):
     obj = Person.objects.get(id = data['id'])
     obj.delete()
     return Response('Person details deleted')
+  
+
+
+class PersonView(APIView):
+  def get(self, request):
+    person = Person.objects.all()
+    serializer = PersonSerializer(person, many=True)
+    return Response(serializer.data)
+  
+  def post(self, request):
+    return Response("This is post APIVIEW")
