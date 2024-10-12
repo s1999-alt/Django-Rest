@@ -15,5 +15,6 @@ urlpatterns = [
     path('',include(router.urls)),
     path('index/',views.index,name='index'),
     path('person/',views.Persondetail,name='person'),
-    path('personapi/',views.PersonView.as_view(),name='personapi')
+    path('personapi/',views.PersonView.as_view(),name='personapi'),
+    path('register/',views.RegisterApi.as_view(),name='register')
 ]

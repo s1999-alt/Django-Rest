@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Person
-from .serializers import PersonSerializer
+from .serializers import PersonSerializer, RegisterSerializer
 from rest_framework import status
 
 from rest_framework.views import APIView
@@ -87,3 +87,17 @@ class PersonViewSet(viewsets.ModelViewSet):
     
     serializer = PersonSerializer(queryset, many=True)
     return Response(serializer.data, status.HTTP_200_OK)
+  
+
+# User Registration View
+
+class RegisterApi(APIView):
+  def post(self, request):
+    _data = request.data
+    serializer = RegisterSerializer(data = _data)
+
+    if not serializer.is_valid():
+      return Response(serializer.errors)
+    serializer.save()
+
+    return Response("user created")
