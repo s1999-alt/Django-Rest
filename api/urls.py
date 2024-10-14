@@ -16,5 +16,6 @@ urlpatterns = [
     path('index/',views.index,name='index'),
     path('person/',views.Persondetail,name='person'),
     path('personapi/',views.PersonView.as_view(),name='personapi'),
-    path('register/',views.RegisterApi.as_view(),name='register')
+    path('register/',views.RegisterView.as_view(),name='register'),
+    path('login/',views.LoginView.as_view(),name='login')
 ]

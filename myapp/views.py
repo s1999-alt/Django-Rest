@@ -1,11 +1,16 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Person
-from .serializers import PersonSerializer, RegisterSerializer
+from .serializers import PersonSerializer, RegisterSerializer, LoginSerializer
 from rest_framework import status
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import TokenAuthentication
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
+
 
 
 # This is the views using api_view decorator
@@ -65,6 +70,9 @@ def Persondetail(request):
 
 #This is the class-based view using APIView
 class PersonView(APIView):
+  permission_classes = [IsAuthenticated]
+  authentication_classes = [TokenAuthentication]
+
   def get(self, request):
     person = Person.objects.all()
     serializer = PersonSerializer(person, many=True)
@@ -91,7 +99,7 @@ class PersonViewSet(viewsets.ModelViewSet):
 
 # User Registration View
 
-class RegisterApi(APIView):
+class RegisterView(APIView):
   def post(self, request):
     _data = request.data
     serializer = RegisterSerializer(data = _data)
@@ -101,3 +109,31 @@ class RegisterApi(APIView):
     serializer.save()
 
     return Response("user created")
+  
+
+class LoginView(APIView):
+  permission_classes = [AllowAny]
+  def post(self, request):
+    _data = request.data
+    serializer = LoginSerializer(data=_data)
+
+    if not serializer.is_valid():
+      return Response(serializer.errors)
+    
+    print("-------------------------",serializer.data)
+    user = authenticate(username = serializer.data['username'], password = serializer.data['password'])
+
+    if not user:
+      return Response("Invalid", status=status.HTTP_404_NOT_FOUND)
+    
+    token, created = Token.objects.get_or_create(user=user)
+
+    if created:
+      print("New Token Created",token)
+    else:
+      print("Existing Token is",token)
+
+    return Response({'message':"Login successfully", 'token': str(token)})
+
+    
+
