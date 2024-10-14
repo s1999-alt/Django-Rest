@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 #router for ViewSets
 router = DefaultRouter()
-router.register(r'person',PersonViewSet,basename='person')
+router.register(r'person',PersonViewSet,basename='person'),
 urlpatterns = router.urls
 
 

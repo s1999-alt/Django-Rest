@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.pagination import PageNumberPagination
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -68,6 +69,10 @@ def Persondetail(request):
     return Response('Person details deleted')
   
 
+
+
+
+
 #This is the class-based view using APIView
 class PersonView(APIView):
   permission_classes = [IsAuthenticated]
@@ -82,19 +87,30 @@ class PersonView(APIView):
     return Response("This is post APIVIEW")
   
 
+#Pagination View
+class CustomPagination(PageNumberPagination):
+  page_size = 2
+  page_size_query_param = 'page'
+
 #This is the class-based view using model Viewsets
 class PersonViewSet(viewsets.ModelViewSet):
+  permission_classes = [AllowAny]
   serializer_class = PersonSerializer
-  queryset = Person.objects.all() 
+  queryset = Person.objects.all()
+  pagination_class = CustomPagination
+
 
   def list(self, request):
     search = request.GET.get('search')
     queryset = self.queryset
+
     if search:
       queryset = queryset.filter(name__startswith= search)
+
+    paginated_queryset = self.paginate_queryset(queryset)
     
-    serializer = PersonSerializer(queryset, many=True)
-    return Response(serializer.data, status.HTTP_200_OK)
+    serializer = PersonSerializer(paginated_queryset, many=True)
+    return self.get_paginated_response(serializer.data)
   
 
 # User Registration View
@@ -110,6 +126,7 @@ class RegisterView(APIView):
 
     return Response("user created")
   
+
 
 class LoginView(APIView):
   permission_classes = [AllowAny]
